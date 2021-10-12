@@ -11,6 +11,8 @@
 #include <linux/can.h>
 #include <linux/can/raw.h>
 
+void speedTest(int s, struct can_frame frame);
+
 int main(int argc, char **argv)
 {
 	int s; 
@@ -37,14 +39,21 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	frame.can_id = 0x555;
-	frame.can_dlc = 5;
-	sprintf(frame.data, "Hello");
+	frame.can_id = 0x777;
+	frame.can_dlc = 8;
+	
+
+	for(int i =0; i< frame.can_dlc;i++)
+	{
+		frame.data[i] = 128;
+	}
+	//sprintf(frame.data, "Helloooo");
 
 	if (write(s, &frame, sizeof(struct can_frame)) != sizeof(struct can_frame)) {
 		perror("Write");
 		return 1;
 	}
+	//speedTest(s,frame );
 
 	if (close(s) < 0) {
 		perror("Close");
@@ -52,4 +61,9 @@ int main(int argc, char **argv)
 	}
 
 	return 0;
+}
+void speedTest(int s, struct can_frame frame)
+{
+	for(int i =0; i< 50000; i++)
+		write(s, &frame, sizeof(struct can_frame));
 }
