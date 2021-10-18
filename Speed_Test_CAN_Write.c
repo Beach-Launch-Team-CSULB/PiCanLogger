@@ -11,15 +11,16 @@
 #include <linux/can.h>
 #include <linux/can/raw.h>
 
+void speedTest(int s, struct can_frame frame);
+
 int main(int argc, char **argv)
 {
-	int s, i; 
-	int nbytes;
+	int s; 
 	struct sockaddr_can addr;
 	struct ifreq ifr;
 	struct can_frame frame;
 
-	printf("CAN Sockets Receive Demo\r\n");
+	printf("CAN Sockets Demo\r\n");
 
 	if ((s = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0) {
 		perror("Socket");
@@ -38,19 +39,22 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	nbytes = read(s, &frame, sizeof(struct can_frame));
+	frame.can_id = 0x666;
+	frame.can_dlc = 8;
+	
 
- 	if (nbytes < 0) {
-		perror("Read");
+	for(int i =0; i< frame.can_dlc;i++)
+	{
+		frame.data[i] = 128;
+	}
+	//sprintf(frame.data, "Helloooo");
+	/*
+	if (write(s, &frame, sizeof(struct can_frame)) != sizeof(struct can_frame)) {
+		perror("Write");
 		return 1;
 	}
-
-	printf("0x%03X [%d] ",frame.can_id, frame.can_dlc);
-
-	for (i = 0; i < frame.can_dlc; i++)
-		printf("%02X ",frame.data[i]);
-
-	printf("\r\n");
+	*/
+	speedTest(s,frame);
 
 	if (close(s) < 0) {
 		perror("Close");
@@ -58,4 +62,9 @@ int main(int argc, char **argv)
 	}
 
 	return 0;
+}
+void speedTest(int s, struct can_frame frame)
+{
+	for(int i =0; i< 10000; i++)
+		write(s, &frame, sizeof(struct can_frame));
 }

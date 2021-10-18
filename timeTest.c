@@ -1,49 +1,20 @@
-#define _POSIX_C_SOURCE 200809L
+#include "simple_pi_time.h"
 
-#define _DEFAULT_SOURCE//for usleep
-#include <unistd.h>//for usleep
+struct timespec startTime;
+struct timespec currentTime;
 
-#include <inttypes.h>
-#include <stdio.h>
-#include <time.h>
-
-
-void delay2(int milliseconds)//uses busy waiting
-{
-    struct timespec startTime;
-    struct timespec currentTime;
-
-    clock_gettime(CLOCK_REALTIME, &startTime);
-    clock_gettime(CLOCK_REALTIME, &currentTime);
-
-    uint32_t startMillis = 1000 * startTime.tv_sec + (startTime.tv_nsec / 1e6);
-    uint32_t currentMillis = 1000 * currentTime.tv_sec + (currentTime.tv_nsec / 1e6);
-    while (currentMillis - startMillis < milliseconds)
-    {
-        clock_gettime(CLOCK_REALTIME, &currentTime);
-        currentMillis = 1000 * currentTime.tv_sec + (currentTime.tv_nsec / 1e6);
-    }
-}
-void delay(int milliseconds)
-{
-    usleep(milliseconds*1000);
-}
 void main()
 {
-    float ms; // Milliseconds
-    time_t s; // Seconds
-    struct timespec startTime;
-    struct timespec currentTime;
-
-    clock_gettime(CLOCK_REALTIME, &startTime);
-    clock_gettime(CLOCK_REALTIME, &currentTime);
-
-    float startMS = startTime.tv_sec + ((float)(startTime.tv_nsec)) / 1e6;
 
     while (1)
     {
-        delay2(250);
-        printf("timeElapsed: \n");
+        //clock_gettime(CLOCK_REALTIME, &currentTime);
+        //printf("%i", currentTime.tv_sec);//works great, outputs seconds
+
+        delay(100);
+          
+        printf("millis(): %i\n", millis());
+
     }
     //printf("timeElapsed: %i", timeElapsed);
 
